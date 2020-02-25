@@ -7,14 +7,15 @@ class Node:
 
 """
     implement insert, delete, find next, find prev
-    find min and find max recurisivly
+    find min and find max Iterurisivly
+    https://www.youtube.com/watch?v=gcULXE7ViZw
 """
-
+#this is only a helper function to help with debugging to get a visual rep of the tre
 def inOrder(n):
     if n:
-        inOrder(n.right)
-        print(n.data, end = " ")
         inOrder(n.left)
+        print(n.data, end = " ")
+        inOrder(n.right)
 
 def inOrderArr(n, arr):
     if (n == None):
@@ -37,7 +38,6 @@ def findMinRec(root):
         return root.data
     else:
         return findMaxRec(root.left)
-
 
 def findNext(root, n):
     #in order traversal
@@ -66,13 +66,31 @@ def findPrev(root, n):
 
     return arr[arr.index(n) - 1]
 
-#this is only a helper function to help with debugging to get a visual rep of the tree
-def preOrder(self, n):
-    if n:
-        self.preOrder(n.right)
-        print(n.data, end = " ")
-        self.preOrder(n.left)
-
+def deleteRec(root, num):
+    if root == None:
+        return root
+    elif (num < root.data):
+        root.left = deleteRec(root.left, num)
+    elif (num > root.data):
+        root.right = deleteRec(root.right, num)
+    else:
+        if (root.left == None and root.right == None):
+            root = None
+            return root
+        elif (root.left == None):
+            temp = root.right
+            root = None
+            return temp
+        elif (root.right == None):
+            temp = root.left
+            root = None
+            return temp
+        else:
+            temp = findMinRec(root)
+            root.data = temp
+            root.right = deleteRec(root.right, temp) 
+    return root
+    
 def insertRec(root, num):
     if root == None: 
         root = num
@@ -96,8 +114,15 @@ insertRec(n, Node(30))
 insertRec(n, Node(112))
 
 inOrder(n)
+print()
 
 print("max", findMaxRec(n))
 print("min", findMinRec(n))
-print("prev", findPrev(n,30))
-print("next", findNext(n,30))
+print("prev 30", findPrev(n,30))
+print("next 30", findNext(n,30))
+
+
+print("delete 30")
+n = deleteRec(n, 30)
+inOrder(n)
+print()
