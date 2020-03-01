@@ -1,1 +1,1 @@
-This is part 1 of the project
+This is part 1 of the project where we had to implement a BST iterativly and recursivly. 
