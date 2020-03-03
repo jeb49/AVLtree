@@ -5,7 +5,6 @@ class Node:
         self.height = 0
         self.left = None
         self.right = None
-        self.parent = 0
         self.parent = None
 
 """
@@ -13,6 +12,40 @@ class Node:
     find min and find max 
     source: https://www.techiedelight.com/inorder-tree-traversal-iterative-recursive/
 """
+
+#taken from geeksForGeeks 
+COUNT = [5]  
+
+
+def print2DUtil(root, space) : 
+  
+    # Base case  
+    if (root == None) : 
+        return
+  
+    # Increase distance between levels  
+    space += COUNT[0] 
+  
+    # Process right child first  
+    print2DUtil(root.right, space)  
+  
+    # Print current node after space  
+    # count  
+    print()  
+    for i in range(COUNT[0], space): 
+        print(end = " ")  
+    print(root.data)  
+  
+    # Process left child  
+    print2DUtil(root.left, space)  
+  
+# Wrapper over print2DUtil()  
+def print2D(root) : 
+      
+    # space=[0] 
+    # Pass initial space count as 0  
+    print2DUtil(root, 0)  
+
 
 def getRandomArray(n):
     arr = []
@@ -155,99 +188,51 @@ def updateHeight(root):
     
     root.height = 1 + max(lHeight, rHeight)
 
-def checkBalanceIter(root):    
-    #nodes to keep track of tree
-    curr = root
-    prev = None
-    prevPrev = None
-
-    grandpa = None
-    parent = None
-
-    lHeight = 0 
-    rHeight = 0 
-
-    #finding grandpa and parent 
-    #when the grandpaBF is between -1 and 1 we dont have to do a rotate
-    #else we will 
-
-    while True: 
-        if root == None:
-            break
-
-        lheight = 0 
-        rheight = 0 
-
-        if root.left:
-            lHeight = root.left.height
-        if root.right:
-            rHeight = root.right.height
-        
-        bal = lheight - rHeight 
-        # print(root.data)
-        # print(bal)
-
-        if  bal >= -1 and bal <= 1:
-            grandpa = curr
-            parent = prev
-            root = prevPrev
-            break
-
-        elif curr.parent != None:
-            curr = curr.parent
-            prevPrev = prev
-            prev = root
-        else:
-            break
-
-    #getting bfs of parent and grandpa
-
-    #if we didnt find anything we finish our function
-    if grandpa == None or parent == None:
+def checkBF(root):
+    if root == None:
         return None
+    
+    leftHeight = 0 
+    rightHeight = 0
 
-    # print(parent.data)
-    print("GOT EM")
+    if root.left != None:
+        leftHeight = root.left.height
+    if root.left != None:
+        rightHeight = root.left.height
 
-    grandpaLeft = 0 
-    grandpaRight = 0
-    if grandpa.left != None:
-        grandpaLeft = grandpa.left.height
-    if grandpa.right != None:
-        grandpaRight = grandpa.right.height
+    bal = leftHeight - rightHeight
+    return bal
 
-    grandpaBF = grandpaLeft - grandpaRight
+def balanceIter(root, oldestBf):    
+    oldest = root
+    if oldestBf > 1:    
+        middle = root.left
+        youngest = root.left.left
 
-    parentLeft = 0 
-    parentRight = 0
-    if parent.left != None:
-        parentLeft = parent.left.height
-    if parent.right != None:
-        parentRight = parent.right.height
+        middleBf = checkBF(middle)
+        # youngest = checkBF(youngest)
 
-    parentBF = parentLeft - parentRight
-
-    if grandpaBF > 1:
-        if parentBF < 0:
-            #left Right
-            rotateLeft(parent)
-            rotateRight(grandpa)
+        if middleBf < 0: 
+            rotateLeft(middle)
+            rotateRight(oldest)
         else:
-            #left left
-            rotateLeft(parent)
-    else:
-        if parentBF > 0:
-            #right left
-            rotateRight(parent)
-            rotateLeft(grandpa)
-        else: 
-            #right right
-            rotateRight(parent)
+            rotateLeft(oldest)
+
+    elif oldestBf < -1:    
+        middle = root.right
+        youngest = root.right.right
+
+        middleBf = checkBF(middle)
+
+        if middleBf > 0: 
+            rotateRight(middle)
+            rotateLeft(oldest)
+        else:
+            rotateRight(oldest)
     
-    setHeight(root)
-    setHeight(parent)
-    setHeight(grandpa)
-    
+    setHeight(oldest)
+    setHeight(middle)
+    setHeight(youngest)
 
 def insertIter(root, num):
     if root == None: 
@@ -259,16 +244,46 @@ def insertIter(root, num):
                     root.right = num
                     root.right.parent = root
                     setHeight(root)
-                    checkBalanceIter(root)
+                    
+                    parentArr = []
+
+                    node = root.right
+
+                    while True:
+                        if node.parent != None:
+                            parentArr.append(node.parent)
+                            node = node.parent
+                        else:
+                            break
+
+                    for i in range(-1, -len(parentArr), -1):
+                        bal = checkBF(parentArr[i])
+                        if bal > 1 or bal < -1:
+                            balanceIter(parentArr[-i], bal)
                     break
                 else:
                     root = root.right
+
             elif root.data > num.data:
                 if root.left == None:
                     root.left = num
                     root.left.parent = root
                     setHeight(root)
-                    checkBalanceIter(root)
+                    parentArr = []
+
+                    node = root.left
+
+                    while True:
+                        if node.parent != None:
+                            parentArr.append(node.parent)
+                            node = node.parent
+                        else:
+                            break
+
+                    for i in range(-1, -len(parentArr), -1):
+                        bal = checkBF(parentArr[i])
+                        if bal > 1 or bal < -1:
+                            balanceIter(parentArr[-i], bal)
                     break
                 else:
                     root = root.left
@@ -323,8 +338,11 @@ insertIter(n, Node(55))
 insertIter(n, Node(33))
 insertIter(n, Node(102))
 
-inOrder(n)
-print()
+print2D(n)
+
+print('\n')
+print('\n')
+
 print("max", findMaxIter(n))
 print("min", findMinIter(n))
 
@@ -333,7 +351,9 @@ print("prev 30", findPrev(n, 30))
 
 print("delete 30")
 deleteIter(n, 30)
+# print2D(n)
 
 
 inOrder(n)
 print()
+
