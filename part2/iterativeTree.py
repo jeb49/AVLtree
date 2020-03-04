@@ -72,14 +72,20 @@ def findMaxIter(root):
         if root.right == None:
             return root.data
         else:
-            root = root.right
+            if root.left != None:
+                root = root.left
+            else:
+                return root.data
 
 def findMinIter(root):
     while True:
         if root.left == None:
             return root.data
         else:
-            root = root.left
+            if root.left != None:
+                root = root.left
+            else:
+                return root.data
 
 
 def findNext(root, n):
@@ -269,6 +275,8 @@ def insertIter(root, num):
                             if bal > 1 or bal < -1:
                                 print('i did it')
                                 balanceIter(node.parent, bal)
+
+                            #check if parent exists
                             if node.parent != None:
                                 node = node.parent
                             else:
@@ -293,6 +301,8 @@ def insertIter(root, num):
                             if bal > 1 or bal < -1:
                                 print('i did it')
                                 balanceIter(node.parent, bal)
+                            
+                            #check if parent exists 
                             if node.parent != None:
                                 node = node.parent
                             else:
@@ -328,23 +338,63 @@ def deleteIter(root, num):
                 break
             elif (root.left == None):
                 temp = root.right
-                #root = None
-                root.parent.right = temp
+
+                if root.parent != None:
+                    root.parent.right = temp
+
+                root = None
+
+                node = temp
+
+                while True:
+                    if node.parent != None:
+                        bal = checkBF(node.parent)
+                        if bal > 1 or bal < -1:
+                            print('i did it')
+                            balanceIter(node.parent, bal)
+
+                        #check if parent exists
+                        if node.parent != None:
+                            node = node.parent
+                        else:
+                            break
+                    else:
+                        break
+
                 break
                 # return root
             elif (root.right == None):
                 temp = root.left
-                root.parent.right = temp
+
+                if root.parent != None:
+                    root.parent.left = temp
                 root = None
+
+                node = temp
+
+                while True:
+                    if node.parent != None:
+                        bal = checkBF(node.parent)
+                        if bal > 1 or bal < -1:
+                            print('i did it')
+                            balanceIter(node.parent, bal)
+
+                        #check if parent exists
+                        if node.parent != None:
+                            node = node.parent
+                        else:
+                            break
+                    else:
+                        break
+
                 break
                 # return root
             else:
-                temp = findNext(root, root.data)
+                temp = findMinIter(root)
                 root.data = temp
                 num = temp
                 root = root.right
-                continue    
-    # return root
+    return node
 
 n = Node(21)
 
@@ -358,35 +408,35 @@ n = Node(21)
 # print2D(n)
 
 
-# testing insert
-# insertIter(n, Node(12))
-# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
-# print2D(n)
-# n = insertIter(n, Node(30))
-# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
-# print2D(n)
-# n = insertIter(n, Node(112))
-# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
-# print2D(n)
-# n = insertIter(n, Node(55))
-# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
-# print2D(n)
-# n = insertIter(n, Node(33))
-# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
-# print2D(n)
-# n = insertIter(n, Node(102))
-# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
-# print2D(n)
+# testing insert, the dashes are there so i can visually rep the tree
+insertIter(n, Node(12))
+print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+print2D(n)
+n = insertIter(n, Node(30))
+print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+print2D(n)
+n = insertIter(n, Node(112))
+print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+print2D(n)
+n = insertIter(n, Node(55))
+print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+print2D(n)
+n = insertIter(n, Node(33))
+print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+print2D(n)
+n = insertIter(n, Node(102))
+print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+print2D(n)
 
-# print('\n')
-# print('\n')
+print('\n')
+print('\n')
 
 
-nums = getRandomArray(10000)
-print('we are good')
+# nums = getRandomArray(10000)
+# print('we are good')
 
-for el in nums:
-    n  = insertIter(n, Node(el))
+# for el in nums:
+#     n  = insertIter(n, Node(el))
 
 
 # print("max", findMaxIter(n))
@@ -395,9 +445,15 @@ for el in nums:
 # print("next 30", findNext(n, 30))
 # print("prev 30", findPrev(n, 30))
 
-# print("delete 30")
-# deleteIter(n, 30)
-# # print2D(n)
+print("delete 21")
+n = deleteIter(n, 21)
+print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+print2D(n)
+
+print("delete 30")
+n = deleteIter(n, 30)
+print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+print2D(n)
 
 
 # inOrder(n)
