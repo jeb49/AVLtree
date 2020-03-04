@@ -146,11 +146,6 @@ def rotateRight(root):
 
     root.left = temp
 
-    print("AAAAAAAAAAHHHHHHHHHHHHHH")
-    # print(leftChild)
-    # print(leftChild.parent)
-    # print(root.parent)
-
     if leftChild != None:
         leftChild.parent = root.parent
     leftChild.right = root
@@ -170,7 +165,6 @@ def setHeight(root):
         lHeight = 0
         rHeight = 0
 
-
         if root.left != None:
             lHeight = root.left.height
 
@@ -179,7 +173,7 @@ def setHeight(root):
 
         root.height = 1 + max(lHeight, rHeight)
 
-        #updating ancestors
+        # updating ancestors
         if root.parent != None:
             root = root.parent
         elif root.parent == None:
@@ -200,8 +194,8 @@ def checkBF(root):
         rightHeight = 0
 
     bal = leftHeight - rightHeight
-    print('root', root.data, 'height', root.height)
-    print('left height', leftHeight, 'right height', rightHeight)
+    # print('root', root.data, 'height', root.height)
+    # print('left height', leftHeight, 'right height', rightHeight)
     return bal
 
 def balanceIter(root, oldestBf):    
@@ -212,12 +206,13 @@ def balanceIter(root, oldestBf):
         middle = root.left
         youngest = root.left.left
         middleBf = checkBF(middle)
-        # youngest = checkBF(youngest)
 
         if middleBf < 0: 
+            #left right
             root.left = rotateLeft(middle)
             root = rotateRight(root)
         else:
+            #right
             root = rotateRight(oldest)
 
         if temp:
@@ -236,11 +231,11 @@ def balanceIter(root, oldestBf):
         middleBf = checkBF(root.right)
 
         if middleBf > 0: 
-            print("rightLeft")
+            #rightLeft
             root.right = rotateRight(middle)
             root = rotateLeft(oldest)
         else:
-            print("Left")
+            #left
             root = rotateLeft(oldest)
         
         if temp:
@@ -272,8 +267,8 @@ def insertIter(root, num):
                     while True:
                         if node.parent != None:
                             bal = checkBF(node.parent)
+
                             if bal > 1 or bal < -1:
-                                print('i did it')
                                 balanceIter(node.parent, bal)
 
                             #check if parent exists
@@ -298,8 +293,8 @@ def insertIter(root, num):
                     while True:
                         if node.parent != None:
                             bal = checkBF(node.parent)
+
                             if bal > 1 or bal < -1:
-                                print('i did it')
                                 balanceIter(node.parent, bal)
                             
                             #check if parent exists 
@@ -341,7 +336,6 @@ def deleteIter(root, num):
 
                 if root.parent != None:
                     root.parent.right = temp
-
                 root = None
 
                 node = temp
@@ -350,7 +344,6 @@ def deleteIter(root, num):
                     if node.parent != None:
                         bal = checkBF(node.parent)
                         if bal > 1 or bal < -1:
-                            print('i did it')
                             balanceIter(node.parent, bal)
 
                         #check if parent exists
@@ -376,7 +369,6 @@ def deleteIter(root, num):
                     if node.parent != None:
                         bal = checkBF(node.parent)
                         if bal > 1 or bal < -1:
-                            print('i did it')
                             balanceIter(node.parent, bal)
 
                         #check if parent exists
@@ -394,6 +386,7 @@ def deleteIter(root, num):
                 root.data = temp
                 num = temp
                 root = root.right
+                continue
     return node
 
 n = Node(21)
@@ -432,6 +425,7 @@ print('\n')
 print('\n')
 
 
+# testing 10000 elements
 # nums = getRandomArray(10000)
 # print('we are good')
 
