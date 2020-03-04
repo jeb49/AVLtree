@@ -52,9 +52,9 @@ def getRandomArray(n):
     for i in range(n):
         #check for no repeats
         while True:
-            num = random.randint(0,n*1000)
+            num = random.randint(0, n*1000)
             if num in arr:
-                num = random.randint(0,n*1000)
+                num = random.randint(0, n*1000)
             elif num not in arr:
                 break
         arr.append(num)
@@ -147,8 +147,8 @@ def rotateRight(root):
 
     if leftChild != None:
         leftChild.parent = root.parent
-        leftChild.right = root
-        root.parent = leftChild
+    leftChild.right = root
+    root.parent = leftChild
 
     if temp != None:
         temp.parent = root
@@ -230,9 +230,11 @@ def balanceIter(root, oldestBf):
         middleBf = checkBF(root.right)
 
         if middleBf > 0: 
+            print("rightLeft")
             root.right = rotateRight(middle)
             root = rotateLeft(oldest)
         else:
+            print("Left")
             root = rotateLeft(oldest)
         
         if temp:
@@ -267,7 +269,10 @@ def insertIter(root, num):
                             if bal > 1 or bal < -1:
                                 print('i did it')
                                 balanceIter(node.parent, bal)
-                            node = node.parent
+                            if node.parent != None:
+                                node = node.parent
+                            else:
+                                break
                         else:
                             break
                     break
@@ -288,7 +293,10 @@ def insertIter(root, num):
                             if bal > 1 or bal < -1:
                                 print('i did it')
                                 balanceIter(node.parent, bal)
-                            node = node.parent
+                            if node.parent != None:
+                                node = node.parent
+                            else:
+                                break
                         else:
                             break
                     break
@@ -350,7 +358,7 @@ n = Node(21)
 # print2D(n)
 
 
-#testing insert
+# testing insert
 # insertIter(n, Node(12))
 # print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
 # print2D(n)
@@ -370,8 +378,8 @@ n = Node(21)
 # print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
 # print2D(n)
 
-print('\n')
-print('\n')
+# print('\n')
+# print('\n')
 
 
 nums = getRandomArray(10000)
