@@ -429,6 +429,9 @@ print('\n')
 # nums = getRandomArray(10000)
 # print('we are good')
 
+# nums = getSortedArray(10000)
+# print('we are good')
+
 # for el in nums:
 #     n  = insertIter(n, Node(el))
 
@@ -451,5 +454,5 @@ print2D(n)
 
 
 # inOrder(n)
-print()
+print(n.height)
 

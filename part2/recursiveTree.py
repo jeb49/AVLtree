@@ -58,9 +58,9 @@ def getRandomArray(n):
     for i in range(n):
         #check for no repeats
         while True:
-            num = random.randint(0,1000)
+            num = random.randint(0, n*1000)
             if num in arr:
-                num = random.randint(0,1000)
+                num = random.randint(0, n*1000)
             elif num not in arr:
                 break
         arr.append(num)
@@ -247,20 +247,26 @@ def insertRec(root, num):
                 insertRec(root.left, num)
 
 n = Node(21)
-insertRec(n, Node(12))
-insertRec(n, Node(30))
-insertRec(n, Node(112))
-insertRec(n, Node(55))
-insertRec(n, Node(33))
-insertRec(n, Node(102))
+# insertRec(n, Node(12))
+# insertRec(n, Node(30))
+# insertRec(n, Node(112))
+# insertRec(n, Node(55))
+# insertRec(n, Node(33))
+# insertRec(n, Node(102))
 
-print2D(n)
+# print2D(n)
 print('\n')
 
-print("max", findMaxRec(n))
-print("min", findMinRec(n))
-print("prev 30", findPrev(n,30))
-print("next 30", findNext(n,30))
+arr = getRandomArray(10000)
+# arr = getSortedArray(10000)
+
+for el in arr:
+    insertRec(n, Node(el))
+
+# print("max", findMaxRec(n))
+# print("min", findMinRec(n))
+# print("prev 30", findPrev(n,30))
+# print("next 30", findNext(n,30))
 
 print("height", getHeight(n))
 
