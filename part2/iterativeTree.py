@@ -2,7 +2,7 @@ import random
 class Node:
     def __init__(self, data):
         self.data = data
-        self.height = 0
+        self.height = 1
         self.left = None
         self.right = None
         self.parent = None
@@ -14,7 +14,7 @@ class Node:
 """
 
 #taken from geeksForGeeks 
-COUNT = [5]  
+COUNT = [10]  
 
 
 def print2DUtil(root, space) : 
@@ -52,9 +52,9 @@ def getRandomArray(n):
     for i in range(n):
         #check for no repeats
         while True:
-            num = random.randint(0,1000)
+            num = random.randint(0,n*1000)
             if num in arr:
-                num = random.randint(0,1000)
+                num = random.randint(0,n*1000)
             elif num not in arr:
                 break
         arr.append(num)
@@ -108,131 +108,143 @@ def findPrev(root, n):
         else:
             root = root.left
     
-#not being used...  yet
-def setHeight(root):
-    n = root
-    lHeight = 0
-    rHeight = 0
-
-    if n.left:
-        lHeight = n.left.height
-    if n.right:
-        rHeight = n.right.height
-    
-    n.height = max(lHeight, rHeight) + 1
-
 def rotateLeft(root):
     leftChild = root.left
     rightChild = root.right
-
-    root.right = leftChild
-    leftChild = root
-
-    if leftChild != None:
-        leftChild.parent = root
     
-    rightChild.parent = root.parent
+    if rightChild != None:
+        temp = rightChild.left 
+    else:
+        temp = None
+
+    root.right = temp
+    
+    if rightChild != None:
+        rightChild.parent = root.parent
+    rightChild.left = root
     root.parent = rightChild
+
+    if temp != None:
+        temp.parent = root
+
+    return rightChild
 
 def rotateRight(root):
     leftChild = root.left
     rightChild = root.right
 
-    root.left = rightChild
-    rightChold = root
-
-    if rightChild != None:
-        rightChild.parent = root
-        
-    leftChild.parent = root.parent
-    root.parent = leftChild
-
-"""
-def checkBalanceRec(root):
-    if root == None:
-        pass
-
-    leftH = getHeight(root.left)
-    rightH = getHeight(root.right)
-
-    bal = leftH - rightH
-
-    leftBal = max(getHeight(leftChild.left), getHeight(leftChild.right))
-    rightBal = max(getHeight(rightChild.left), getHeight(rightChild.right))
-
-    if abs(bal) > 1:
-        #do nothing because we know that the tree is balanced
-        pass
+    if leftChild != None: 
+        temp = leftChild.right 
     else:
-        if leftBal <= 0:
-            #single rotate right
-        else:
-            #rotate left
-            #rotate right
-    if rightBal <= 0:
-            #single rotate left
-        else:
-            #rotate right
-            #rotate left 
-"""
+        temp = None
 
-def updateHeight(root):
-    lHeight = 0
-    rHeight = 0
+    root.left = temp
 
-    if root.left:
-        lHeight = root.left.height
+    print("AAAAAAAAAAHHHHHHHHHHHHHH")
+    # print(leftChild)
+    # print(leftChild.parent)
+    # print(root.parent)
 
-    if root.right:
-        rHeight = root.right.height
-    
-    root.height = 1 + max(lHeight, rHeight)
+    if leftChild != None:
+        leftChild.parent = root.parent
+        leftChild.right = root
+        root.parent = leftChild
+
+    if temp != None:
+        temp.parent = root
+
+    return leftChild
+
+
+def setHeight(root):
+    if root == None:
+        return 0
+
+    while True:
+        lHeight = 0
+        rHeight = 0
+
+
+        if root.left != None:
+            lHeight = root.left.height
+
+        if root.right != None:
+            rHeight = root.right.height
+
+        root.height = 1 + max(lHeight, rHeight)
+
+        #updating ancestors
+        if root.parent != None:
+            root = root.parent
+        elif root.parent == None:
+            break
 
 def checkBF(root):
     if root == None:
         return None
-    
-    leftHeight = 0 
-    rightHeight = 0
 
     if root.left != None:
         leftHeight = root.left.height
-    if root.left != None:
-        rightHeight = root.left.height
+    else:
+        leftHeight = 0 
+
+    if root.right != None:
+        rightHeight = root.right.height
+    else:
+        rightHeight = 0
 
     bal = leftHeight - rightHeight
+    print('root', root.data, 'height', root.height)
+    print('left height', leftHeight, 'right height', rightHeight)
     return bal
 
 def balanceIter(root, oldestBf):    
     oldest = root
+    temp =  oldest.parent
+
     if oldestBf > 1:    
         middle = root.left
         youngest = root.left.left
-
         middleBf = checkBF(middle)
         # youngest = checkBF(youngest)
 
         if middleBf < 0: 
-            rotateLeft(middle)
-            rotateRight(oldest)
+            root.left = rotateLeft(middle)
+            root = rotateRight(root)
         else:
-            rotateLeft(oldest)
+            root = rotateRight(oldest)
+
+        if temp:
+            if temp.left and temp.left == oldest:
+                temp.left = root
+            else:
+                temp.right = root
+
+        setHeight(oldest)
+        setHeight(middle)
+        setHeight(youngest)
 
     elif oldestBf < -1:    
         middle = root.right
-        youngest = root.right.right
-
-        middleBf = checkBF(middle)
+        youngest = root.right.left
+        middleBf = checkBF(root.right)
 
         if middleBf > 0: 
-            rotateRight(middle)
-            rotateLeft(oldest)
+            root.right = rotateRight(middle)
+            root = rotateLeft(oldest)
         else:
-            rotateRight(oldest)
+            root = rotateLeft(oldest)
+        
+        if temp:
+            if temp.left and temp.left == oldest:
+                temp.left = root
+            else:
+                temp.right = root
+            
+        setHeight(oldest)
+        setHeight(middle)
+        setHeight(youngest)
     
-    setHeight(oldest)
-    setHeight(middle)
-    setHeight(youngest)
 
 def insertIter(root, num):
     if root == None: 
@@ -244,22 +256,20 @@ def insertIter(root, num):
                     root.right = num
                     root.right.parent = root
                     setHeight(root)
-                    
-                    parentArr = []
 
+                    #inserting all the ancenstors
+                    parentArr = []
                     node = root.right
 
                     while True:
                         if node.parent != None:
-                            parentArr.append(node.parent)
+                            bal = checkBF(node.parent)
+                            if bal > 1 or bal < -1:
+                                print('i did it')
+                                balanceIter(node.parent, bal)
                             node = node.parent
                         else:
                             break
-
-                    for i in range(-1, -len(parentArr), -1):
-                        bal = checkBF(parentArr[i])
-                        if bal > 1 or bal < -1:
-                            balanceIter(parentArr[-i], bal)
                     break
                 else:
                     root = root.right
@@ -269,24 +279,22 @@ def insertIter(root, num):
                     root.left = num
                     root.left.parent = root
                     setHeight(root)
-                    parentArr = []
 
                     node = root.left
 
                     while True:
                         if node.parent != None:
-                            parentArr.append(node.parent)
+                            bal = checkBF(node.parent)
+                            if bal > 1 or bal < -1:
+                                print('i did it')
+                                balanceIter(node.parent, bal)
                             node = node.parent
                         else:
                             break
-
-                    for i in range(-1, -len(parentArr), -1):
-                        bal = checkBF(parentArr[i])
-                        if bal > 1 or bal < -1:
-                            balanceIter(parentArr[-i], bal)
                     break
                 else:
-                    root = root.left
+                    root = root.left                 
+    return node
 
 def inOrder(n):
     if n:
@@ -331,29 +339,59 @@ def deleteIter(root, num):
     # return root
 
 n = Node(21)
-insertIter(n, Node(12))
-insertIter(n, Node(30))
-insertIter(n, Node(112))
-insertIter(n, Node(55))
-insertIter(n, Node(33))
-insertIter(n, Node(102))
 
-print2D(n)
+# testing rotate
+# n.left = Node(5)
+# n.right = Node(30)
+# n.right.left = Node(25)
 
-print('\n')
-print('\n')
-
-print("max", findMaxIter(n))
-print("min", findMinIter(n))
-
-print("next 30", findNext(n, 30))
-print("prev 30", findPrev(n, 30))
-
-print("delete 30")
-deleteIter(n, 30)
+# print2D(n)
+# n = rotateLeft(n)
 # print2D(n)
 
 
-inOrder(n)
+#testing insert
+# insertIter(n, Node(12))
+# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+# print2D(n)
+# n = insertIter(n, Node(30))
+# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+# print2D(n)
+# n = insertIter(n, Node(112))
+# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+# print2D(n)
+# n = insertIter(n, Node(55))
+# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+# print2D(n)
+# n = insertIter(n, Node(33))
+# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+# print2D(n)
+# n = insertIter(n, Node(102))
+# print('---------------------------------------------------------\n\n\n---------------------------------------------------------')
+# print2D(n)
+
+print('\n')
+print('\n')
+
+
+nums = getRandomArray(10000)
+print('we are good')
+
+for el in nums:
+    n  = insertIter(n, Node(el))
+
+
+# print("max", findMaxIter(n))
+# print("min", findMinIter(n))
+
+# print("next 30", findNext(n, 30))
+# print("prev 30", findPrev(n, 30))
+
+# print("delete 30")
+# deleteIter(n, 30)
+# # print2D(n)
+
+
+# inOrder(n)
 print()
 

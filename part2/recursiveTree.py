@@ -12,6 +12,40 @@ class Node:
     find min and find max Iterurisivly
     https://www.youtube.com/watch?v=gcULXE7ViZw
 """
+#taken from geeksForGeeks 
+COUNT = [5]  
+
+
+def print2DUtil(root, space) : 
+  
+    # Base case  
+    if (root == None) : 
+        return
+  
+    # Increase distance between levels  
+    space += COUNT[0] 
+  
+    # Process right child first  
+    print2DUtil(root.right, space)  
+  
+    # Print current node after space  
+    # count  
+    print()  
+    for i in range(COUNT[0], space): 
+        print(end = " ")  
+    print(root.data)  
+  
+    # Process left child  
+    print2DUtil(root.left, space)  
+  
+# Wrapper over print2DUtil()  
+def print2D(root) : 
+      
+    # space=[0] 
+    # Pass initial space count as 0  
+    print2DUtil(root, 0)  
+
+
 #this is only a helper function to help with debugging to get a visual rep of the tre
 def inOrder(n):
     if n:
@@ -216,13 +250,12 @@ n = Node(21)
 insertRec(n, Node(12))
 insertRec(n, Node(30))
 insertRec(n, Node(112))
-insertRec(n, Node(27))
-insertRec(n, Node(99))
-insertRec(n, Node(73))
-insertRec(n, Node(22))
+insertRec(n, Node(55))
+insertRec(n, Node(33))
+insertRec(n, Node(102))
 
-inOrder(n)
-print()
+print2D(n)
+print('\n')
 
 print("max", findMaxRec(n))
 print("min", findMinRec(n))
@@ -231,12 +264,12 @@ print("next 30", findNext(n,30))
 
 print("height", getHeight(n))
 
-print("delete 30")
-n = deleteRec(n, 30)
-print("delete 12")
-n = deleteRec(n, 12)
-print("delete 112")
-n = deleteRec(n, 112)
+# print("delete 30")
+# n = deleteRec(n, 30)
+# print("delete 12")
+# n = deleteRec(n, 12)
+# print("delete 112")
+# n = deleteRec(n, 112)
 
 inOrder(n)
 print("\n")
